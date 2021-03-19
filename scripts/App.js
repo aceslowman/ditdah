@@ -27,7 +27,7 @@ const App = () => {
 
     document.addEventListener("keydown", keybindings, false);
     return () => document.removeEventListener("keydown", keybindings, false);
-  }, [handleTogglePlay, sequence, setIsPlaying, isPlaying]);
+  }, [handleTogglePlay, /*sequence,*/ setIsPlaying, isPlaying]);
 
   /*
     startup audio context
@@ -72,6 +72,21 @@ const App = () => {
       e.keyCode !== 16 // shift
     ) {
       e.preventDefault();
+    }
+  };
+  
+    const handleTogglePlay = e => {
+    if (isPlaying) {
+      Tone.Transport.cancel();
+      Tone.Transport.stop();
+      // sequence.cancel();
+      // sequence.stop();
+      setIsPlaying(false);
+    } else {
+      Tone.Transport.cancel();
+      // sequence.start();
+      Tone.Transport.start();
+      setIsPlaying(true);
     }
   };
 

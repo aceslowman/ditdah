@@ -44,7 +44,7 @@ const App = () => {
       await Tone.start();
       console.log("audio context has started");
       Tone.Transport.bpm.value = parseFloat(bpm);
-      setSynth(new Tone.MonoSynth().toDestination());
+      setSynth(new Tone.Synth().toDestination());
       setReady(true);
     };
 
@@ -139,8 +139,8 @@ const App = () => {
 
             partArray.push({
               time: unitTime,
-              duration: "8n",
-              // duration: duration,
+              // duration: "8n",
+              duration: duration,
               note: note,
               velocity: velocity
             });
@@ -159,27 +159,27 @@ const App = () => {
 
     if (ready) {
       const callback = (time, value) => {
-        console.log('value', value)
-        console.log('time', time)
+        console.log("value", value);
+        console.log("time", time);
         if (soundOn)
           synth.triggerAttackRelease(value.note, "8n", time, value.velocity);
       };
 
       let events = getPartFromText();
-      
-      console.log('events', events)
-      
 
-      if (part) {        
-        console.log('updating a part')
+      console.log("events", events);
+
+      if (part) {
+        // part.cancel();
+        console.log("updating a part");
         part.value = events;
         part.callback = callback;
         part.loop = loop ? true : 1;
-        console.log('part.value', part.value)
+        console.log("part.value", part.value);
         part.loopEnd = "1m";
         part.start(0);
       } else {
-        console.log('setting up a part')
+        console.log("setting up a part");
         let newPart = new Tone.Part(callback, events);
         newPart.loop = loop ? true : 1;
         newPart.loopEnd = "1m";
@@ -188,13 +188,22 @@ const App = () => {
         //   Tone.Time(events[events.length - 1].duration).toSeconds();
         newPart.start(0);
         setPart(newPart);
-        console.log('part.value', newPart.value)
+        console.log("part.value", newPart.value);
       }
-      
+
       // Tone.Transport.cancel();
-      Tone.Transport.start(0);
+      Tone.Transport.start();
     }
-  }, [text, part, setPart, loop, soundOn, pauseAfterLine, pauseAfterWord, synth]);
+  }, [
+    text,
+    part,
+    setPart,
+    loop,
+    soundOn,
+    pauseAfterLine,
+    pauseAfterWord,
+    synth
+  ]);
 
   // CENTERS MAININPUT TEXT
   // https://stackoverflow.com/questions/4954252/css-textarea-that-expands-as-you-type-text
@@ -236,15 +245,15 @@ const App = () => {
 
   const handleTogglePlay = e => {
     if (isPlaying) {
-      Tone.Transport.cancel();
-      Tone.Transport.stop();
-      part.cancel();
-      part.stop();
+      // Tone.Transport.cancel();
+      // Tone.Transport.stop();
+      // part.cancel();
+      // part.stop();
       setIsPlaying(false);
     } else {
-      Tone.Transport.cancel();
-      part.start(0);
-      Tone.Transport.start();
+      // Tone.Transport.cancel();
+      // part.start(0);
+      // Tone.Transport.start();
       setIsPlaying(true);
     }
   };

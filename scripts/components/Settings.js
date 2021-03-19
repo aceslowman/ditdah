@@ -80,8 +80,22 @@ const Settings = props => {
                 value={props.bpm}
               />
             </InputGroup>
+<!--             pauseLineInput
+pauseWordInput -->
           </InputRow>
           <button onClick={props.onResetMelody}>reset melody</button>
+        </InputPanel>
+        <InputPanel title="articulation">
+          <InputGroup>
+              <label>tempo</label>
+              <input
+                onChange={props.onBPMChange}
+                className="tempoInput"
+                type="number"
+                step="1"
+                value={props.bpm}
+              />
+            </InputGroup>
         </InputPanel>
       </div>
       <div className="toggleSettings" onClick={toggleSettings}></div>

@@ -6,7 +6,12 @@ const App = () => {
   let [part, setPart] = React.useState(); // for Tone.js Part
 
   let [ready, setReady] = React.useState();
-  let [isPlaying, setIsPlaying] = React.useState();
+  let [isPlaying, setIsPlaying] = React.useState();  
+  
+  let [midiInputs, setMidiInputs] = React.useState(null);
+  let [midiOutputs, setMidiOutputs] = React.useState(null);
+  let [activeMidiInput, setActiveMidiInput] = React.useState(null);
+  let [activeMidiOutput, setActiveMidiOutput] = React.useState(null);
 
   let [synth, setSynth] = React.useState();
   let [loop, setLoop] = React.useState(false);
@@ -52,6 +57,48 @@ const App = () => {
       document.removeEventListener("click", startAudioContext);
     };
   }, [ready, synth, setSynth]);
+  
+    /*
+    set up midi
+  */
+  React.useEffect(() => {
+    const initMIDI = async () => {
+      if (!midiInputs || !midiOutputs) {
+        await navigator.requestMIDIAccess().then(access => {
+          // Get lists of available MIDI controllers
+          let inputs,
+            outputs = {};
+
+          for (const input of access.inputs.values()) {
+            inputs = {
+              ...inputs,
+              [input.id]: input
+            };
+          }
+
+          for (const output of access.outputs.values()) {
+            outputs = {
+              ...outputs,
+              [output.id]: output
+            };
+          }
+
+          setMidiInputs(inputs);
+          setMidiOutputs(outputs);
+
+          setActiveMidiInput(inputs[Object.keys(inputs)[0]]);
+          setActiveMidiOutput(outputs[Object.keys(outputs)[0]]);
+
+          access.onstatechange = function(e) {
+            // Print information about the (dis)connected MIDI controller
+            console.log(e.port.name, e.port.manufacturer, e.port.state);
+          };
+        });
+      }
+    };
+
+    initMIDI();
+  }, [midiInputs, midiOutputs]);
 
   // when text changes
   React.useEffect(() => {}, [text]);
@@ -94,7 +141,7 @@ const App = () => {
     }
   };
 
-  function restartSynth() {
+  const restartSynth = () => {
     if (part) part.stop();
 
     let events = getPartFromText();
@@ -206,15 +253,15 @@ const App = () => {
   };
 
   const handleBPMChange = e => setBPM(parseFloat(e.target.value));
-  const handlePauseAfterLine = e => setPauseAfterLine(e.target.value);
-  const handlePauseAfterWord = e => setPauseAfterWord(e.target.value);
+  const handleChangePauseAfterLine = e => setPauseAfterLine(e.target.value);
+  const handleChangePauseAfterWord = e => setPauseAfterWord(e.target.value);
 
   return (
     <React.Fragment>
       <Settings
         onBPMChange={handleBPMChange}
-        onPauseAfterLine={handlePauseAfterLine}
-        onPauseAfterWord={handlePauseAfterWord}
+        onChangePauseAfterLine={handleChangePauseAfterLine}
+        onChangePauseAfterWord={handleChangePauseAfterWord}
         bpm={bpm}
         pauseAfterLine={pauseAfterLine}
         pauseAfterWord={pauseAfterWord}

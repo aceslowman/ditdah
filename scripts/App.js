@@ -106,7 +106,17 @@ const App = () => {
       Tone.Transport.start();
       setIsPlaying(true);
     }
-  };
+  }
+  
+  const handleTextAreaKeyDown = e => {
+    filterUserInput(e);
+    keyDownUpdateSize(e);
+  }
+  
+  const handleTextAreaKeyUp = e => {
+    handleMainTextChange(e);
+    keyUpUpdateSize(e);
+  }
 
   return (
     <React.Fragment>
@@ -114,8 +124,8 @@ const App = () => {
       <textarea
         class="MAININPUT"
         placeholder="_"
-        onKeyUp={keyUpUpdateSize}
-        onKeyDown={keyDownUpdateSize}
+        onKeyUp={handleTextAreaKeyUp}
+        onKeyDown={handleTextAreaKeyDown}
       ></textarea>
     </React.Fragment>
   );
@@ -128,11 +138,6 @@ ReactDOM.render(React.createElement(App), domContainer);
 // let synth = new Tone.Synth().toDestination();
 // let part;
 
-// let state = {
-//   pauseAfterLine: 0.5,
-//   pauseAfterWord: 0.25,
-//   txtArray: ""
-// };
 
 // function restartSynth() {
 //   if(part) part.stop();
@@ -221,25 +226,6 @@ ReactDOM.render(React.createElement(App), domContainer);
 //   Tone.Transport.bpm.value = parseFloat(e.target.value);
 // }
 
-// document
-//   .querySelector(".MAININPUT")
-//   .addEventListener("keydown", filterUserInput);
-
-// document
-//   .querySelector(".MAININPUT")
-//   .addEventListener("keyup", handleMainTextChange);
-
-// document.querySelector(".tempoInput")
-//   .addEventListener("change", onBPMChange);
-
-// document.querySelector(".pauseLineInput")
-//   .addEventListener("change", handlePauseAfterLine);
-
-// document.querySelector(".pauseWordInput")
-//   .addEventListener("change", handlePauseAfterWord);
-
-// document.querySelector("#loopToggle)
-//   .addEventListener("onclick", handleLoopToggle);
 
 // function handlePauseAfterLine(e) {
 //   state.pauseAfterLine = e.target.value;

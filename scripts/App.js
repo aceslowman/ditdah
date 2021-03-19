@@ -1,20 +1,110 @@
 /* global Tone, ReactDOM, React */
 const App = () => {
+  let [pauseAfterLine, setPauseAfterLine] = React.useState(0.5);
+  let [pauseAfterWord, setPauseAfterWord] = React.useState(0.25);
+  let [text, setText] = React.useState();
+  
+  let [ready, setReady] = React.useState();  
+  let [isPlaying, setIsPlaying] = React.useState();
+  
+  let [synth, setSynth] = React.useState();
+  let [loop, setLoop] = React.useState(false);
+  let [bpm, setBPM] = React.useState(120);
+
+  /*
+    set up keybindings
+  */
+  React.useEffect(() => {
+    const keybindings = e => {
+      switch (e.keyCode) {
+        case 32: // space bar
+          handleTogglePlay();
+          break;
+        default:
+          break;
+      }
+    };
+
+    document.addEventListener("keydown", keybindings, false);
+    return () => document.removeEventListener("keydown", keybindings, false);
+  }, [handleTogglePlay, sequence, setIsPlaying, isPlaying]);
+
+  /*
+    startup audio context
+  */
+  React.useEffect(() => {
+    const startAudioContext = async () => {
+      await Tone.start();
+      console.log("audio context has started");
+      Tone.Transport.bpm.value = parseFloat(bpm);
+      setSynth(new Tone.PolySynth().toDestination());
+      setReady(true);
+    };
+
+    if (!ready) {
+      document.addEventListener("click", startAudioContext);
+    } else {
+      document.removeEventListener("click", startAudioContext);
+    }
+
+    return () => {
+      document.removeEventListener("click", startAudioContext);
+    };
+  }, [ready, synth, setSynth]);
+
+  const handleMainTextChange = async e => {
+    // parse lines and units
+    setText(e.target.value.split(/\r?\n/).map(e => e.split(" ")));
+  };
+
+  const filterUserInput = e => {
+    if (
+      // allowed keys:
+      e.keyCode !== 190 && // dot
+      e.keyCode !== 191 && // slash
+      e.keyCode !== 13 && // new line
+      e.keyCode !== 32 && // space
+      e.keyCode !== 8 && // backspace
+      e.keyCode !== 37 && // left arrow
+      e.keyCode !== 38 && // up arrow
+      e.keyCode !== 39 && // right arrow
+      e.keyCode !== 40 && // down arrow
+      e.keyCode !== 16 // shift
+    ) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <React.Fragment>
       <Settings />
       <textarea class="MAININPUT" placeholder="_"></textarea>
     </React.Fragment>
-  )
-}
+  );
+};
 
 const domContainer = document.getElementById("APP");
 ReactDOM.render(React.createElement(App), domContainer);
 
 // CENTERS MAININPUT TEXT
 // https://stackoverflow.com/questions/4954252/css-textarea-that-expands-as-you-type-text
-// functi22ent.querySelector(".MAININPUT").addEventListener("keyup", keyUpUpdateSize);
+// function updateSize(e) {
+//   let text = e.target.value + String.fromCharCode(event.keyCode);
+//   e.target.rows = text.split(/\r\n|\r|\n/).length;
+// }
 
+// function keyDownUpdateSize(e) {
+//   if (event.keyCode != 8 && event.keyCode != 46) updateSize(e);
+// }
+
+// function keyUpUpdateSize(e) {
+//   if (event.keyCode == 8 || event.keyCode == 46) updateSize(e);
+// }
+
+// document
+//   .querySelector(".MAININPUT")
+//   .addEventListener("keydown", keyDownUpdateSize);
+// document.querySelector(".MAININPUT").addEventListener("keyup", keyUpUpdateSize);
 
 // // <textarea class="MAININPUT" placeholder="_"></textarea>
 
@@ -28,43 +118,11 @@ ReactDOM.render(React.createElement(App), domContainer);
 //   txtArray: ""
 // };
 
-// async function handleMainTextChange(e) {
-//   // parse lines and units
-//   state.txtArray = e.target.value.split(/\r?\n/).map(e => e.split(" "));
-
-//   // enable audio if not already enabled
-//   if (Tone.Transport.state !== "started") {
-//     await Tone.start();
-//     restartSynth();
-//   } else {
-//     restartSynth();
-//   }
-
-//   if (e.target.value === "") Tone.Transport.stop();
-// }
-
-// function filterUserInput(e) {
-//   if (                   // allowed keys:
-//     e.keyCode !== 190 && // dot
-//     e.keyCode !== 191 && // slash
-//     e.keyCode !== 13 &&  // new line
-//     e.keyCode !== 32 &&  // space
-//     e.keyCode !== 8 &&   // backspace
-//     e.keyCode !== 37 &&  // left arrow
-//     e.keyCode !== 38 &&  // up arrow
-//     e.keyCode !== 39 &&  // right arrow
-//     e.keyCode !== 40 &&  // down arrow
-//     e.keyCode !== 16     // shift
-//   ) {
-//     e.preventDefault();
-//   }
-// }
-
 // function restartSynth() {
 //   if(part) part.stop();
-  
+
 //   let events = getPartFromText();
-  
+
 //   // use an array of objects as long as the object has a "time" attribute
 //   part = new Tone.Part((time, value) => {
 //     // the value is an object which contains both the note and the velocity
@@ -83,7 +141,7 @@ ReactDOM.render(React.createElement(App), domContainer);
 //   part.loopEnd = events[events.length-1].time + Tone.Time(events[events.length-1].duration).toSeconds()
 
 //   Tone.Transport.start();
-  
+
 //   console.log("loopStart", part.loopStart);
 //   console.log("loopEnd", part.loopEnd)
 // }
@@ -91,12 +149,12 @@ ReactDOM.render(React.createElement(App), domContainer);
 // function getPartFromText() {
 //   console.group()
 //   let isLineEnd, isWordEnd = false;
-  
+
 //   let partArray = [];
 //   let iter = 0;
-  
+
 //   let qTime = Tone.Time("4n").toSeconds();
-  
+
 //   // get part from text
 //   state.txtArray.forEach((line, l_i) => {
 //     line.forEach((word, w_i) => {
@@ -117,7 +175,7 @@ ReactDOM.render(React.createElement(App), domContainer);
 //         } else if (isWordEnd) {
 //           // hold for end of word
 //           console.log("holding at end of word...", unit);
-//           unitTime += state.pauseAfterWord * qTime;          
+//           unitTime += state.pauseAfterWord * qTime;
 //         }
 
 //         partArray.push({
@@ -129,7 +187,7 @@ ReactDOM.render(React.createElement(App), domContainer);
 //         });
 
 //         iter++;
-        
+
 //         // pause needs to apply to the NEXT note after the line or word
 //         isLineEnd = w_i === line.length - 1;
 //         isWordEnd = u_i === word.split("").length - 1;
@@ -165,7 +223,7 @@ ReactDOM.render(React.createElement(App), domContainer);
 //   .addEventListener("change", handlePauseAfterWord);
 
 // document.querySelector("#loopToggle)
-//   .addEventListener("onclick", handleLoopToggle);                 
+//   .addEventListener("onclick", handleLoopToggle);
 
 // function handlePauseAfterLine(e) {
 //   state.pauseAfterLine = e.target.value;
@@ -178,9 +236,5 @@ ReactDOM.render(React.createElement(App), domContainer);
 // }
 
 // function handleLoopToggle(e) {
-  
+
 // }
-
-
-
-

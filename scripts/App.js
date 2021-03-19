@@ -160,6 +160,7 @@ const App = () => {
     if (ready) {
       const callback = (time, value) => {
         console.log('value', value)
+        console.log('time', time)
         if (soundOn)
           synth.triggerAttackRelease(value.note, "8n", time, value.velocity);
       };
@@ -167,27 +168,31 @@ const App = () => {
       let events = getPartFromText();
       
       console.log('events', events)
+      
 
       if (part) {
+        console.log('updating a part')
         part.value = events;
         part.callback = callback;
-        // part.loop = loop ? true : 1;
-        part.loop = true;
+        part.loop = loop ? true : 1;
+        console.log('part.value', part.value)
       } else {
         console.log('setting up a part')
         let newPart = new Tone.Part(callback, events);
-        // newPart.loop = loop ? true : 1;
-        newPart.loop = true;
+        newPart.loop = loop ? true : 1;
+        // newPart.loop = true;
+        newPart.loopEnd = 2
         // newPart.loopEnd =
         //   events[events.length - 1].time +
         //   Tone.Time(events[events.length - 1].duration).toSeconds();
         setPart(newPart);
+        console.log('part.value', newPart.value)
       }
       
       // Tone.Transport.cancel();
       // Tone.Transport.start();
     }
-  }, [text, part, setPart, loop, soundOn, pauseAfterLine, pauseAfterWord]);
+  }, [text, part, setPart, loop, soundOn, pauseAfterLine, pauseAfterWord, synth]);
 
   // CENTERS MAININPUT TEXT
   // https://stackoverflow.com/questions/4954252/css-textarea-that-expands-as-you-type-text

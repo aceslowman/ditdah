@@ -170,12 +170,13 @@ const App = () => {
       console.log('events', events)
       
 
-      if (part) {
+      if (part) {        
         console.log('updating a part')
         part.value = events;
         part.callback = callback;
         part.loop = loop ? true : 1;
         console.log('part.value', part.value)
+        part.start(0);
       } else {
         console.log('setting up a part')
         let newPart = new Tone.Part(callback, events);
@@ -185,12 +186,13 @@ const App = () => {
         // newPart.loopEnd =
         //   events[events.length - 1].time +
         //   Tone.Time(events[events.length - 1].duration).toSeconds();
+        newPart.start(0);
         setPart(newPart);
         console.log('part.value', newPart.value)
       }
       
-      Tone.Transport.cancel();
-      Tone.Transport.start();
+      // Tone.Transport.cancel();
+      // Tone.Transport.start();
     }
   }, [text, part, setPart, loop, soundOn, pauseAfterLine, pauseAfterWord, synth]);
 

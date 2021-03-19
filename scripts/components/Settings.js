@@ -160,8 +160,8 @@ const Settings = props => {
           <button
             onClick={props.onTogglePlay}
             style={{
-              color: props.isPlaying ? "#fff" : "#602500",
-              backgroundColor: props.isPlaying ? "#602500" : "#fff"
+              color: props.isPlaying ? "#fff" : "#000",
+              backgroundColor: props.isPlaying ? "#000" : "#fff"
             }}
           >
             {props.isPlaying ? "stop" : "play"}

@@ -170,6 +170,7 @@ const App = () => {
         part.callback = callback;
         part.loop = loop ? true : 1;
       } else {
+        console.log('setting up a part')
         let newPart = new Tone.Part(callback, events);
         newPart.loop = loop ? true : 1;
         newPart.loopEnd =

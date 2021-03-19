@@ -11,7 +11,7 @@ html,
 body,
 #APP {
   font-family: monospace;
-  background-color: black;
+  background-color: #0e0e0e;
   width: 100%;
   height: 100%;
   padding: 0px;
@@ -25,7 +25,7 @@ body,
 }
 
 .SETTINGS {
-  background-color: black;
+  background-color: #0e0e0e;
   width: 0%;
   height: 100%;
   overflow: hidden;
@@ -50,7 +50,7 @@ body,
 }
 
 .settingsInner {
-  background-color: black;
+  background-color: #0e0e0e;
   padding: 15px;
   display: flex;
   flex-flow: column;
@@ -70,7 +70,7 @@ body,
 
 .settingsInner button {
   background-color: #fff;
-  color: black;
+  color: #0e0e0e;
   border: 1px solid white;
   flex-grow: 2;
   white-space: nowrap;
@@ -78,14 +78,14 @@ body,
 
 .settingsInner input {
   background-color: #fff;
-  color: black;
+  color: #0e0e0e;
   border: 1px dotted white;
   min-width: 0px;
 }
 
 .settingsInner select {
   background-color: #fff;
-  color: black;
+  color: #0e0e0e;
   border: 1px solid white;
   min-width: 0px;
   flex-grow: 2;
@@ -102,8 +102,6 @@ body,
   white-space: pre;
   margin: 15px 0px;
 }
-
-
 
 .MAININPUT {
   color: white;

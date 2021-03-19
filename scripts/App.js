@@ -10,6 +10,12 @@ const App = () => {
 
 const domContainer = document.getElementById("APP");
 ReactDOM.render(React.createElement(App), domContainer);
+
+// CENTERS MAININPUT TEXT
+// https://stackoverflow.com/questions/4954252/css-textarea-that-expands-as-you-type-text
+// functi22ent.querySelector(".MAININPUT").addEventListener("keyup", keyUpUpdateSize);
+
+
 // // <textarea class="MAININPUT" placeholder="_"></textarea>
 
 // l/* global Tone */

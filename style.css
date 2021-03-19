@@ -1,5 +1,15 @@
+/* 
+  text: white
+  background: black
+*/
+
+* {
+  box-sizing: border-box;
+}
+
 html,
-body {
+body,
+#APP {
   font-family: monospace;
   background-color: black;
   width: 100%;
@@ -8,10 +18,92 @@ body {
   margin: 0px;
 }
 
-body {
+#APP {
+  width: 100%;
   display: flex;
   justify-content: center;
 }
+
+.SETTINGS {
+  background-color: black;
+  width: 0%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  -webkit-transition: width 1s ease-in-out;
+  -moz-transition: width 1s ease-in-out;
+  -o-transition: width 1s ease-in-out;
+  transition: width 1s ease-in-out;
+  z-index: 2; 
+  overflow-y: overlay;
+}
+
+.toggleSettings {
+  background-color: white;
+  width: 20px;
+  height: 20px;
+  transform: translate(10px, -0px) rotate(45deg);
+  position: absolute;
+  z-index: 1;
+}
+
+.settingsInner {
+  background-color: black;
+  padding: 15px;
+  display: flex;
+  flex-flow: column;
+  color: white;
+  width: 100%;
+  box-sizing: border-box;
+  align-content: stretch;
+  z-index: 2;
+  padding-right: 25px;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.settingsInner label {
+  padding: 5px 5px 5px 0px;
+}
+
+.settingsInner button {
+  background-color: #fff;
+  color: black;
+  border: 1px solid white;
+  flex-grow: 2;
+  white-space: nowrap;
+}
+
+.settingsInner input {
+  background-color: #fff;
+  color: black;
+  border: 1px dotted white;
+  min-width: 0px;
+}
+
+.settingsInner select {
+  background-color: #fff;
+  color: black;
+  border: 1px solid white;
+  min-width: 0px;
+  flex-grow: 2;
+}
+
+.settingsInner > div {
+  display: flex;
+  box-shadow: 2px 2px 6px 0px;
+}
+
+.credits {
+  color: white;
+  line-break: anywhere;
+  white-space: pre;
+  margin: 15px 0px;
+}
+
+
 
 .MAININPUT {
   color: white;
@@ -26,70 +118,4 @@ body {
 
 .MAININPUT:focus {
   outline: none;
-}
-
-.SETTINGS {
-  background-color: black;
-  width: 0%;
-  height: 100%;
-  overflow: hidden;
-  -webkit-transition: width 1s ease-in-out;
-  -moz-transition: width 1s ease-in-out;
-  -o-transition: width 1s ease-in-out;
-  transition: width 1s ease-in-out;
-  display: flex;
-  /* align-self: center; */
-  justify-content: flex-end;
-  align-items: center;
-
-  z-index: 2;
-}
-
-.toggleSettings {
-  background-color: white;
-  width: 20px;
-  height: 20px;
-  transform: translate(10px, -0px) rotate(45deg);
-  position: absolute;
-
-  z-index: 1;
-}
-
-.settingsInner {
-  background-color: black;
-  /*   background-color: green; */
-  padding: 15px;
-  width: 50px;
-  min-height: 100px;
-  display: flex;
-  flex-flow: column;
-  flex-grow: 2;
-  color: white;
-
-  z-index: 2;
-}
-
-.settingsInner label {
-  padding: 5px 0px;
-}
-
-.settingsInner input {
-  background-color: #0d0d0d;
-  color:white;
-  border: 1px dotted white;
-}
-
-.settingsInner > div {
-  display: flex;
-  align-self: flex-end;
-  flex-flow: column;
-  padding-bottom: 15px;
-}
-
-.credits {
-  position: absolute;
-  bottom: 5px;
-  color: white;
-  line-break: anywhere;
-  white-space: pre;
 }

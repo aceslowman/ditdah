@@ -156,6 +156,13 @@ const App = () => {
 
       return partArray;
     };
+    
+    // if transport isn't already started, restart
+    if (Tone.Transport.state !== "started") {
+      Tone.start();
+      Tone.Transport.start();
+      setIsPlaying(true);
+    }
 
     if (ready) {
       const callback = (time, value) => {

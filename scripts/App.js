@@ -159,8 +159,13 @@ const App = () => {
 
     if (ready) {
       const callback = (time, value) => {
-//         how do I send out of a specific channel?
-        activeMidiOutput.send([128, Tone.Frequency(value.note).toMidi(), value.velocity * 127]);
+        /*
+          send to specific channel by changing the first
+          hex like this:
+          
+            [0x(NOTEON)(CHANNEL)]
+        */
+        activeMidiOutput.send([0x91, Tone.Frequency(value.note).toMidi(), value.velocity * 127]);
         if (soundOn) synth.triggerAttackRelease(value.note, "8n", time, value.velocity);
       };
 

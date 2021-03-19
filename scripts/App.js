@@ -44,7 +44,7 @@ const App = () => {
       await Tone.start();
       console.log("audio context has started");
       Tone.Transport.bpm.value = parseFloat(bpm);
-      setSynth(new Tone.PolySynth().toDestination());
+      setSynth(new Tone.MonoSynth().toDestination());
       setReady(true);
     };
 
@@ -57,7 +57,7 @@ const App = () => {
     return () => {
       document.removeEventListener("click", startAudioContext);
     };
-  }, [ready, synth, setSynth]);
+  }, [ready, setReady, synth, setSynth]);
 
   /*
     set up midi
@@ -176,13 +176,13 @@ const App = () => {
         part.callback = callback;
         part.loop = loop ? true : 1;
         console.log('part.value', part.value)
+        part.loopEnd = "1m";
         part.start(0);
       } else {
         console.log('setting up a part')
         let newPart = new Tone.Part(callback, events);
         newPart.loop = loop ? true : 1;
-        // newPart.loop = true;
-        newPart.loopEnd = 2
+        newPart.loopEnd = "1m";
         // newPart.loopEnd =
         //   events[events.length - 1].time +
         //   Tone.Time(events[events.length - 1].duration).toSeconds();
@@ -192,7 +192,7 @@ const App = () => {
       }
       
       // Tone.Transport.cancel();
-      // Tone.Transport.start();
+      Tone.Transport.start(0);
     }
   }, [text, part, setPart, loop, soundOn, pauseAfterLine, pauseAfterWord, synth]);
 
@@ -243,7 +243,7 @@ const App = () => {
       setIsPlaying(false);
     } else {
       Tone.Transport.cancel();
-      part.start();
+      part.start(0);
       Tone.Transport.start();
       setIsPlaying(true);
     }

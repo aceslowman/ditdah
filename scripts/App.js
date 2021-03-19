@@ -2,12 +2,12 @@
 const App = () => {
   let [pauseAfterLine, setPauseAfterLine] = React.useState(0.5);
   let [pauseAfterWord, setPauseAfterWord] = React.useState(0.25);
-  let [text, setText] = React.useState([""]);
+  let [text, setText] = React.useState([[" "]]);
   let [part, setPart] = React.useState(); // for Tone.js Part
 
   let [ready, setReady] = React.useState();
-  let [isPlaying, setIsPlaying] = React.useState();  
-  
+  let [isPlaying, setIsPlaying] = React.useState();
+
   let [midiInputs, setMidiInputs] = React.useState(null);
   let [midiOutputs, setMidiOutputs] = React.useState(null);
   let [activeMidiInput, setActiveMidiInput] = React.useState(null);
@@ -58,7 +58,7 @@ const App = () => {
       document.removeEventListener("click", startAudioContext);
     };
   }, [ready, synth, setSynth]);
-  
+
   /*
     set up midi
   */
@@ -101,36 +101,32 @@ const App = () => {
     initMIDI();
   }, [midiInputs, midiOutputs]);
 
-  // when text changes
+  /*
+    when text changes
+  */
   React.useEffect(() => {
-    if (part) part.stop();
+    if (ready) {
+      const callback = (time, value) => {
+        if (soundOn)
+          synth.triggerAttackRelease(value.note, "8n", time, value.velocity);
+      };
 
-    let events = getPartFromText();
+      let events = getPartFromText();
 
-    // use an array of objects as long as the object has a "time" attribute
-    part = new Tone.Part((time, value) => {
-      // the value is an object which contains both the note and the velocity
-      if(soundOn) synth.triggerAttackRelease(
-        value.note,
-        "8n",
-        // value.duration,
-        time,
-        value.velocity
-      );
-    }, events).start(0);
+      if (part) {
+        part.value = events;
+        part.callback = callback;
+        part.loop = loop ? true : 1;
+      } else {
+        let part = new Tone.Part(callback, events);
 
-    part.loop = true;
-    // make sure loopEnd is the full length of the parts
-    // console.log('LOOP END', )
-    part.loopEnd =
-      events[events.length - 1].time +
-      Tone.Time(events[events.length - 1].duration).toSeconds();
-
-    Tone.Transport.start();
-
-    console.log("loopStart", part.loopStart);
-    console.log("loopEnd", part.loopEnd);
-  }, [text, part]);
+        part.loop = loop ? true : 1;
+        part.loopEnd =
+          events[events.length - 1].time +
+          Tone.Time(events[events.length - 1].duration).toSeconds();
+      }
+    }
+  }, [text, part, setPart, loop, soundOn]);
 
   // CENTERS MAININPUT TEXT
   // https://stackoverflow.com/questions/4954252/css-textarea-that-expands-as-you-type-text
@@ -170,8 +166,7 @@ const App = () => {
     }
   };
 
-
-  const getPartFromText = () =>{
+  const getPartFromText = () => {
     console.group();
     let isLineEnd,
       isWordEnd = false;
@@ -180,6 +175,8 @@ const App = () => {
     let iter = 0;
 
     let qTime = Tone.Time("4n").toSeconds();
+
+    console.log("text", text);
 
     // get part from text
     text.forEach((line, l_i) => {
@@ -225,7 +222,7 @@ const App = () => {
     console.groupEnd();
 
     return partArray;
-  }
+  };
 
   const handleTogglePlay = e => {
     if (isPlaying) {
@@ -260,11 +257,11 @@ const App = () => {
     setActiveMidiInput(midiInputs[e.target.value]);
   const handleMidiOutputChange = e =>
     setActiveMidiOutput(midiOutputs[e.target.value]);
-  
+
   const handleLoopToggle = e => {
     // if (part) part.loop = !loop;
     setLoop(prev => !prev);
-  }
+  };
 
   return (
     <React.Fragment>
@@ -278,7 +275,7 @@ const App = () => {
         onChangePauseAfterWord={handleChangePauseAfterWord}
         bpm={bpm}
         pauseAfterLine={pauseAfterLine}
-        pauseAfterWord={pauseAfterWord}        
+        pauseAfterWord={pauseAfterWord}
         midiInputs={midiInputs}
         midiOutputs={midiOutputs}
         activeMidiInput={activeMidiInput}

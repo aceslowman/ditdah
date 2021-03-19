@@ -13,6 +13,7 @@ const App = () => {
   let [activeMidiInput, setActiveMidiInput] = React.useState(null);
   let [activeMidiOutput, setActiveMidiOutput] = React.useState(null);
 
+  let [soundOn, setSoundOn] = React.useState(false);
   let [synth, setSynth] = React.useState();
   let [loop, setLoop] = React.useState(false);
   let [bpm, setBPM] = React.useState(120);
@@ -255,16 +256,37 @@ const App = () => {
   const handleBPMChange = e => setBPM(parseFloat(e.target.value));
   const handleChangePauseAfterLine = e => setPauseAfterLine(e.target.value);
   const handleChangePauseAfterWord = e => setPauseAfterWord(e.target.value);
+  const handleToggleSoundOn = e => setSoundOn(prev => !prev);
+  const handleMidiInputChange = e =>
+    setActiveMidiInput(midiInputs[e.target.value]);
+  const handleMidiOutputChange = e =>
+    setActiveMidiOutput(midiOutputs[e.target.value]);
+  
+  const handleLoopToggle = e => {
+    // if (part) part.loop = !loop;
+    setLoop(prev => !prev);
+  }
 
   return (
     <React.Fragment>
       <Settings
+        onTogglePlay={handleTogglePlay}
+        onMidiInputChange={e => handleMidiInputChange(e.target.value)}
+        onMidiOutputChange={e => handleMidiOutputChange(e.target.value)}
+        onToggleLoop={handleLoopToggle}
         onBPMChange={handleBPMChange}
         onChangePauseAfterLine={handleChangePauseAfterLine}
         onChangePauseAfterWord={handleChangePauseAfterWord}
         bpm={bpm}
         pauseAfterLine={pauseAfterLine}
-        pauseAfterWord={pauseAfterWord}
+        pauseAfterWord={pauseAfterWord}        
+        midiInputs={midiInputs}
+        midiOutputs={midiOutputs}
+        activeMidiInput={activeMidiInput}
+        activeMidiOutput={activeMidiOutput}
+        onToggleSoundOn={handleToggleSoundOn}
+        soundOn={soundOn}
+        isPlaying={isPlaying}
       />
       <textarea
         className="MAININPUT"

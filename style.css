@@ -93,10 +93,11 @@ body,
 
 .settingsInner > div {
   display: flex;
-  box-shadow: 2px 2px 6px 0px;
+  box-shadow: 2px 2px 6px 0px #b9b9b9;
 }
 
 .credits {
+  padding:5px;
   color: white;
   line-break: anywhere;
   white-space: pre;

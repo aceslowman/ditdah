@@ -60,7 +60,7 @@ const Settings = props => {
       <div className="settingsInner">
         <InputPanel title="basic">
           <InputRow>            
-            <InputGroup>
+
               <label>tempo</label>
               <input
                 onChange={props.onBPMChange}
@@ -68,7 +68,6 @@ const Settings = props => {
                 step="1"
                 value={props.bpm}
               />
-            </InputGroup>
           </InputRow>
           <button onClick={props.onResetMelody}>reset melody</button>
         </InputPanel>
@@ -93,6 +92,80 @@ const Settings = props => {
               />
             </InputGroup>
           </InputRow>
+        </InputPanel>
+        <InputPanel title="MIDI">
+          <InputRow>
+            <label htmlFor="midiinputs">Midi Input</label>
+            <select
+              name="midiinputs"
+              value={props.activeMidiInput ? props.activeMidiInput.id : ""}
+              onChange={props.onMidiInputChange}
+            >
+              <option>select an input</option>
+              {props.midiInputs &&
+                Object.keys(props.midiInputs).map(e => {
+                  return (
+                    <option key={e} value={props.midiInputs[e].id}>
+                      {props.midiInputs[e].name}
+                    </option>
+                  );
+                })}
+            </select>
+          </InputRow>
+
+          <MIDILog device={props.activeMidiInput} />
+          <InputRow>
+            <label htmlFor="midioutputs">Midi Output</label>
+            <select
+              name="midioutputs"
+              value={props.activeMidiOutput ? props.activeMidiOutput.id : ""}
+              onChange={props.onMidiOutputChange}
+            >
+              <option>select an output</option>
+              {props.midiOutputs &&
+                Object.keys(props.midiOutputs).map(e => {
+                  return (
+                    <option key={e} value={props.midiOutputs[e].id}>
+                      {props.midiOutputs[e].name}
+                    </option>
+                  );
+                })}
+            </select>
+          </InputRow>
+          <MIDILog device={props.activeMidiOutput} />
+        </InputPanel>
+        <InputPanel title="playback">
+          <InputRow>
+            <InputGroup>
+              <label>
+                loop
+                <input
+                  onChange={props.onToggleLoop}
+                  checked={props.loop}
+                  type="checkbox"
+                />
+              </label>
+            </InputGroup>
+            <InputGroup>
+              <label>
+                sound
+                <input
+                  onChange={props.onToggleSoundOn}
+                  checked={props.soundOn}
+                  type="checkbox"
+                />
+              </label>
+            </InputGroup>
+          </InputRow>
+          <button
+            onClick={props.onTogglePlay}
+            style={{
+              color: props.isPlaying ? "#fff" : "#602500",
+              backgroundColor: props.isPlaying ? "#602500" : "#fff"
+            }}
+          >
+            {props.isPlaying ? "stop" : "play"}
+          </button>
         </InputPanel>
         <div className="credits">
           dit(.)dah(/) by{" "}

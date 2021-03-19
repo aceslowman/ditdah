@@ -233,7 +233,7 @@ const App = () => {
     if (event.keyCode == 8 || event.keyCode == 46) updateSize(e);
   };
 
-  const handleMainTextChange = async e => {
+  const handleMainTextChange = e => {
     // parse lines and units
     setText(e.target.value.split(/\r?\n/).map(e => e.split(" ")));
   };
@@ -258,15 +258,13 @@ const App = () => {
 
   const handleTogglePlay = e => {
     if (isPlaying) {
-      // Tone.Transport.cancel();
-      // Tone.Transport.stop();
-      // part.cancel();
-      // part.stop();
+      Tone.Transport.cancel();
+      Tone.Transport.stop();
       setIsPlaying(false);
     } else {
-      // Tone.Transport.cancel();
+      Tone.Transport.cancel();
+      Tone.Transport.start();
       // part.start(0);
-      // Tone.Transport.start();
       setIsPlaying(true);
     }
   };
@@ -301,6 +299,7 @@ const App = () => {
         onMidiInputChange={handleMidiInputChange}
         onMidiOutputChange={handleMidiOutputChange}
         onToggleLoop={handleLoopToggle}
+        loop={loop}
         onBPMChange={handleBPMChange}
         onChangePauseAfterLine={handleChangePauseAfterLine}
         onChangePauseAfterWord={handleChangePauseAfterWord}

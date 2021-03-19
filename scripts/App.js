@@ -105,6 +105,58 @@ const App = () => {
     when text changes
   */
   React.useEffect(() => {
+    const getPartFromText = () => {
+      let isLineEnd,
+        isWordEnd = false;
+
+      let partArray = [];
+      let iter = 0;
+
+      let qTime = Tone.Time("4n").toSeconds();
+
+      // get part from text
+      text.forEach((line, l_i) => {
+        line.forEach((word, w_i) => {
+          word.split("").forEach((unit, u_i) => {
+            let unitTime = qTime * iter;
+            let duration = unit === "." ? "8n" : "4n";
+            let note = unit === "." ? "C3" : "C4";
+            let velocity = unit === "." ? 0.5 : 1.0;
+
+            // scale base time
+            // time 1/= 4;
+
+            // hold for end of line
+            if (isLineEnd && isWordEnd) {
+              console.log("holding at end of line", unit);
+              unitTime += pauseAfterLine * qTime;
+              // duration = "1m";
+            } else if (isWordEnd) {
+              // hold for end of word
+              console.log("holding at end of word...", unit);
+              unitTime += pauseAfterWord * qTime;
+            }
+
+            partArray.push({
+              time: unitTime,
+              duration: "8n",
+              // duration: duration,
+              note: note,
+              velocity: velocity
+            });
+
+            iter++;
+
+            // pause needs to apply to the NEXT note after the line or word
+            isLineEnd = w_i === line.length - 1;
+            isWordEnd = u_i === word.split("").length - 1;
+          });
+        });
+      });
+
+      return partArray;
+    };
+
     if (ready) {
       const callback = (time, value) => {
         if (soundOn)
@@ -118,15 +170,18 @@ const App = () => {
         part.callback = callback;
         part.loop = loop ? true : 1;
       } else {
-        let part = new Tone.Part(callback, events);
-
-        part.loop = loop ? true : 1;
-        part.loopEnd =
+        let newPart = new Tone.Part(callback, events);
+        newPart.loop = loop ? true : 1;
+        newPart.loopEnd =
           events[events.length - 1].time +
           Tone.Time(events[events.length - 1].duration).toSeconds();
+        setPart(newPart);
       }
+      
+      Tone.Transport.cancel();
+      Tone.Transport.start();
     }
-  }, [text, part, setPart, loop, soundOn]);
+  }, [text, part, setPart, loop, soundOn, pauseAfterLine, pauseAfterWord]);
 
   // CENTERS MAININPUT TEXT
   // https://stackoverflow.com/questions/4954252/css-textarea-that-expands-as-you-type-text
@@ -166,74 +221,16 @@ const App = () => {
     }
   };
 
-  const getPartFromText = () => {
-    console.group();
-    let isLineEnd,
-      isWordEnd = false;
-
-    let partArray = [];
-    let iter = 0;
-
-    let qTime = Tone.Time("4n").toSeconds();
-
-    console.log("text", text);
-
-    // get part from text
-    text.forEach((line, l_i) => {
-      line.forEach((word, w_i) => {
-        word.split("").forEach((unit, u_i) => {
-          let unitTime = qTime * iter;
-          let duration = unit === "." ? "8n" : "4n";
-          let note = unit === "." ? "C3" : "C4";
-          let velocity = unit === "." ? 0.5 : 1.0;
-
-          // scale base time
-          // time 1/= 4;
-
-          // hold for end of line
-          if (isLineEnd && isWordEnd) {
-            console.log("holding at end of line", unit);
-            unitTime += pauseAfterLine * qTime;
-            // duration = "1m";
-          } else if (isWordEnd) {
-            // hold for end of word
-            console.log("holding at end of word...", unit);
-            unitTime += pauseAfterWord * qTime;
-          }
-
-          partArray.push({
-            time: unitTime,
-            duration: "8n",
-            // duration: duration,
-            note: note,
-            velocity: velocity
-          });
-
-          iter++;
-
-          // pause needs to apply to the NEXT note after the line or word
-          isLineEnd = w_i === line.length - 1;
-          isWordEnd = u_i === word.split("").length - 1;
-        });
-      });
-    });
-
-    console.log("partarray", partArray);
-    console.groupEnd();
-
-    return partArray;
-  };
-
   const handleTogglePlay = e => {
     if (isPlaying) {
       Tone.Transport.cancel();
       Tone.Transport.stop();
-      // part.cancel();
-      // part.stop();
+      part.cancel();
+      part.stop();
       setIsPlaying(false);
     } else {
       Tone.Transport.cancel();
-      // part.start();
+      part.start();
       Tone.Transport.start();
       setIsPlaying(true);
     }

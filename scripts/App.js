@@ -13,7 +13,7 @@ const App = () => {
   let [activeMidiInput, setActiveMidiInput] = React.useState(null);
   let [activeMidiOutput, setActiveMidiOutput] = React.useState(null);
 
-  let [soundOn, setSoundOn] = React.useState(true);
+  let [soundOn, setSoundOn] = React.useState(false);
   let [synth, setSynth] = React.useState();
   let [loop, setLoop] = React.useState(true);
   let [bpm, setBPM] = React.useState(120);

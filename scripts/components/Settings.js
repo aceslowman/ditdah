@@ -168,11 +168,13 @@ const Settings = props => {
           </button>
         </InputPanel>
         <div className="credits">
-          dit(.)dah(/) by{" "}
+          <a href="https://github.com/aceslowman/ditdah" target="_blank">
+            <strong>dit(.)dah(/)</strong>           
+          </a>
+          &nbsp;by&nbsp;
           <a href="https://linktr.ee/aceslowman" target="_blank">
             aceslowman
-          </a>{" "}
-           &nbsp; 2021
+          </a>
         </div>
       </div>
       <div className="toggleSettings" onClick={toggleSettings}></div>

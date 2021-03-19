@@ -15,7 +15,7 @@ const App = () => {
 
   let [soundOn, setSoundOn] = React.useState(true);
   let [synth, setSynth] = React.useState();
-  let [loop, setLoop] = React.useState(false);
+  let [loop, setLoop] = React.useState(true);
   let [bpm, setBPM] = React.useState(120);
 
   /*
@@ -159,10 +159,8 @@ const App = () => {
 
     if (ready) {
       const callback = (time, value) => {
-        console.log("value", value);
-        console.log("time", time);
-        if (soundOn)
-          synth.triggerAttackRelease(value.note, "8n", time, value.velocity);
+        activeMidiOutput.send([128, Tone.Frequency(value.note).toMidi(), value.velocity * 127]);
+        if (soundOn) synth.triggerAttackRelease(value.note, "8n", time, value.velocity);
       };
 
       let events = getPartFromText();
@@ -170,19 +168,21 @@ const App = () => {
       console.log("events", events);
 
       if (part) {
-        // part.cancel();
-        console.log("updating a part");
-        part.value = events;
+        part.clear();
+
+        events.forEach((e,i) => {
+          part.at(e.time, e)
+        })
+        
         part.callback = callback;
         part.loop = loop ? true : 1;
-        console.log("part.value", part.value);
-        part.loopEnd = "1m";
+        // part.loopEnd = "1m";
         part.start(0);
       } else {
         console.log("setting up a part");
         let newPart = new Tone.Part(callback, events);
         newPart.loop = loop ? true : 1;
-        newPart.loopEnd = "1m";
+        // newPart.loopEnd = "1m";
         // newPart.loopEnd =
         //   events[events.length - 1].time +
         //   Tone.Time(events[events.length - 1].duration).toSeconds();
@@ -191,7 +191,6 @@ const App = () => {
         console.log("part.value", newPart.value);
       }
 
-      // Tone.Transport.cancel();
       Tone.Transport.start();
     }
   }, [
@@ -285,8 +284,8 @@ const App = () => {
     <React.Fragment>
       <Settings
         onTogglePlay={handleTogglePlay}
-        onMidiInputChange={e => handleMidiInputChange(e.target.value)}
-        onMidiOutputChange={e => handleMidiOutputChange(e.target.value)}
+        onMidiInputChange={handleMidiInputChange}
+        onMidiOutputChange={handleMidiOutputChange}
         onToggleLoop={handleLoopToggle}
         onBPMChange={handleBPMChange}
         onChangePauseAfterLine={handleChangePauseAfterLine}

@@ -160,7 +160,7 @@ const App = () => {
     // if transport isn't already started, restart
     if (Tone.Transport.state !== "started") {
       Tone.start();
-      Tone.Transport.start();
+      // Tone.Transport.start();
       setIsPlaying(true);
     }
 
@@ -207,6 +207,7 @@ const App = () => {
       Tone.Transport.start();
     }
   }, [
+    isPlaying,
     text,
     part,
     setPart,
@@ -262,9 +263,10 @@ const App = () => {
       Tone.Transport.stop();
       setIsPlaying(false);
     } else {
+      console.log('hello')
       Tone.Transport.cancel();
       Tone.Transport.start();
-      // part.start(0);
+      // part.start();
       setIsPlaying(true);
     }
   };

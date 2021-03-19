@@ -2,11 +2,11 @@
 const App = () => {
   let [pauseAfterLine, setPauseAfterLine] = React.useState(0.5);
   let [pauseAfterWord, setPauseAfterWord] = React.useState(0.25);
-  let [text, setText] = React.useState([[" "]]);
+  let [text, setText] = React.useState([[""]]);
   let [part, setPart] = React.useState(); // for Tone.js Part
 
   let [ready, setReady] = React.useState();
-  let [isPlaying, setIsPlaying] = React.useState();
+  let [isPlaying, setIsPlaying] = React.useState(true);
 
   let [midiInputs, setMidiInputs] = React.useState(null);
   let [midiOutputs, setMidiOutputs] = React.useState(null);
@@ -24,9 +24,9 @@ const App = () => {
   React.useEffect(() => {
     const keybindings = e => {
       switch (e.keyCode) {
-        case 32: // space bar
-          handleTogglePlay();
-          break;
+        // case 32: // space bar
+          // handleTogglePlay();
+          // break;
         default:
           break;
       }
@@ -155,14 +155,7 @@ const App = () => {
       });
 
       return partArray;
-    };
-    
-    // if transport isn't already started, restart
-    if (Tone.Transport.state !== "started") {
-      Tone.start();
-      // Tone.Transport.start();
-      setIsPlaying(true);
-    }
+    };    
 
     if (ready) {
       const callback = (time, value) => {
@@ -204,7 +197,7 @@ const App = () => {
         console.log("part.value", newPart.value);
       }
 
-      Tone.Transport.start();
+      if(isPlaying) Tone.Transport.start();
     }
   }, [
     isPlaying,
@@ -261,12 +254,13 @@ const App = () => {
     if (isPlaying) {
       Tone.Transport.cancel();
       Tone.Transport.stop();
+      part.stop();
       setIsPlaying(false);
     } else {
       console.log('hello')
       Tone.Transport.cancel();
       Tone.Transport.start();
-      // part.start();
+      part.start();
       setIsPlaying(true);
     }
   };

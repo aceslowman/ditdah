@@ -3,10 +3,10 @@ const App = () => {
   let [pauseAfterLine, setPauseAfterLine] = React.useState(0.5);
   let [pauseAfterWord, setPauseAfterWord] = React.useState(0.25);
   let [text, setText] = React.useState();
-  
-  let [ready, setReady] = React.useState();  
+
+  let [ready, setReady] = React.useState();
   let [isPlaying, setIsPlaying] = React.useState();
-  
+
   let [synth, setSynth] = React.useState();
   let [loop, setLoop] = React.useState(false);
   let [bpm, setBPM] = React.useState(120);
@@ -52,6 +52,24 @@ const App = () => {
     };
   }, [ready, synth, setSynth]);
 
+  /*
+    on Mount
+  */
+  // CENTERS MAININPUT TEXT
+  // https://stackoverflow.com/questions/4954252/css-textarea-that-expands-as-you-type-text
+  const updateSize = e => {
+    let text = e.target.value + String.fromCharCode(event.keyCode);
+    e.target.rows = text.split(/\r\n|\r|\n/).length;
+  };
+
+  const keyDownUpdateSize = e => {
+    if (event.keyCode != 8 && event.keyCode != 46) updateSize(e);
+  };
+
+  const keyUpUpdateSize = e => {
+    if (event.keyCode == 8 || event.keyCode == 46) updateSize(e);
+  };
+
   const handleMainTextChange = async e => {
     // parse lines and units
     setText(e.target.value.split(/\r?\n/).map(e => e.split(" ")));
@@ -74,8 +92,8 @@ const App = () => {
       e.preventDefault();
     }
   };
-  
-    const handleTogglePlay = e => {
+
+  const handleTogglePlay = e => {
     if (isPlaying) {
       Tone.Transport.cancel();
       Tone.Transport.stop();
@@ -93,35 +111,18 @@ const App = () => {
   return (
     <React.Fragment>
       <Settings />
-      <textarea class="MAININPUT" placeholder="_"></textarea>
+      <textarea
+        class="MAININPUT"
+        placeholder="_"
+        onKeyUp={keyUpUpdateSize}
+        onKeyDown={keyDownUpdateSize}
+      ></textarea>
     </React.Fragment>
   );
 };
 
 const domContainer = document.getElementById("APP");
 ReactDOM.render(React.createElement(App), domContainer);
-
-// CENTERS MAININPUT TEXT
-// https://stackoverflow.com/questions/4954252/css-textarea-that-expands-as-you-type-text
-// function updateSize(e) {
-//   let text = e.target.value + String.fromCharCode(event.keyCode);
-//   e.target.rows = text.split(/\r\n|\r|\n/).length;
-// }
-
-// function keyDownUpdateSize(e) {
-//   if (event.keyCode != 8 && event.keyCode != 46) updateSize(e);
-// }
-
-// function keyUpUpdateSize(e) {
-//   if (event.keyCode == 8 || event.keyCode == 46) updateSize(e);
-// }
-
-// document
-//   .querySelector(".MAININPUT")
-//   .addEventListener("keydown", keyDownUpdateSize);
-// document.querySelector(".MAININPUT").addEventListener("keyup", keyUpUpdateSize);
-
-// // <textarea class="MAININPUT" placeholder="_"></textarea>
 
 // l/* global Tone */
 // let synth = new Tone.Synth().toDestination();

@@ -1,4 +1,4 @@
-# DITDAH
+# dit(.)dah(/)
 
 dit(.)dah(/) is a tool that manipulates MIDI event timing and punctuation. 
 

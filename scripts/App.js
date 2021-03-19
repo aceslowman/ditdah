@@ -189,8 +189,8 @@ const App = () => {
         console.log('part.value', newPart.value)
       }
       
-      // Tone.Transport.cancel();
-      // Tone.Transport.start();
+      Tone.Transport.cancel();
+      Tone.Transport.start();
     }
   }, [text, part, setPart, loop, soundOn, pauseAfterLine, pauseAfterWord, synth]);
 
@@ -267,7 +267,6 @@ const App = () => {
     setActiveMidiOutput(midiOutputs[e.target.value]);
 
   const handleLoopToggle = e => {
-    // if (part) part.loop = !loop;
     setLoop(prev => !prev);
   };
 

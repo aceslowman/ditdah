@@ -159,28 +159,33 @@ const App = () => {
 
     if (ready) {
       const callback = (time, value) => {
+        console.log('value', value)
         if (soundOn)
           synth.triggerAttackRelease(value.note, "8n", time, value.velocity);
       };
 
       let events = getPartFromText();
+      
+      console.log('events', events)
 
       if (part) {
         part.value = events;
         part.callback = callback;
-        part.loop = loop ? true : 1;
+        // part.loop = loop ? true : 1;
+        part.loop = true;
       } else {
         console.log('setting up a part')
         let newPart = new Tone.Part(callback, events);
-        newPart.loop = loop ? true : 1;
-        newPart.loopEnd =
-          events[events.length - 1].time +
-          Tone.Time(events[events.length - 1].duration).toSeconds();
+        // newPart.loop = loop ? true : 1;
+        newPart.loop = true;
+        // newPart.loopEnd =
+        //   events[events.length - 1].time +
+        //   Tone.Time(events[events.length - 1].duration).toSeconds();
         setPart(newPart);
       }
       
-      Tone.Transport.cancel();
-      Tone.Transport.start();
+      // Tone.Transport.cancel();
+      // Tone.Transport.start();
     }
   }, [text, part, setPart, loop, soundOn, pauseAfterLine, pauseAfterWord]);
 
